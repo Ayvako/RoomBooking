@@ -10,4 +10,12 @@ public class RoomBookingDbContext(DbContextOptions<RoomBookingDbContext> options
     public DbSet<RoomService> RoomServices => this.Set<RoomService>();
 
     public DbSet<Booking> Bookings => this.Set<Booking>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(RoomBookingDbContext).Assembly);
+    }
 }
