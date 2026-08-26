@@ -7,4 +7,6 @@ public class CreateBookingRequest
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
+
+    public IReadOnlyList<Guid> ServiceIds { get; set; } = [];
 }
