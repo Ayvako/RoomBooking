@@ -29,5 +29,20 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .WithMany()
             .HasForeignKey(booking => booking.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(booking => booking.Services)
+            .WithMany()
+            .UsingEntity(
+                "BookingRoomService",
+                right => right
+            .HasOne(typeof(RoomService))
+            .WithMany()
+            .HasForeignKey("RoomServiceId")
+            .OnDelete(DeleteBehavior.Restrict),
+                left => left
+            .HasOne(typeof(Booking))
+            .WithMany()
+            .HasForeignKey("BookingId")
+            .OnDelete(DeleteBehavior.Cascade));
     }
 }

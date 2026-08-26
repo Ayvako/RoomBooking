@@ -17,4 +17,6 @@ public class Booking
     public decimal TotalPrice { get; set; }
 
     public BookingStatus Status { get; set; }
+
+    public List<RoomService> Services { get; set; } = [];
 }
