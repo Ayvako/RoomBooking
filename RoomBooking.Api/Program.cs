@@ -1,13 +1,15 @@
 namespace RoomBooking.Api;
 
+using RoomBooking.Api.Extensions;
+
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
-        builder.Services.AddOpenApi();
+        builder.Services.AddApiServices();
+        builder.Services.AddInfrastructureServices(builder.Configuration);
 
         var app = builder.Build();
 
