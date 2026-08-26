@@ -4,5 +4,5 @@ public enum BookingStatus
 {
     Active,
 
-    Cancelled
+    Cancelled,
 }

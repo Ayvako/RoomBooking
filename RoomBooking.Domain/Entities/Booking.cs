@@ -1,6 +1,6 @@
-﻿using RoomBooking.Domain.Enums;
+﻿namespace RoomBooking.Domain.Entities;
 
-namespace RoomBooking.Domain.Entities;
+using RoomBooking.Domain.Enums;
 
 public class Booking
 {

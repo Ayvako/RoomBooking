@@ -1,6 +1,6 @@
-﻿using RoomBooking.Domain.Entities;
+﻿namespace RoomBooking.Application.Interfaces;
 
-namespace RoomBooking.Application.Interfaces;
+using RoomBooking.Domain.Entities;
 
 public interface IRoomRepository
 {
