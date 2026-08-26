@@ -1,32 +1,90 @@
 ﻿namespace RoomBooking.Application.Services;
 
+using RoomBooking.Application.DTOs.Rooms;
+using RoomBooking.Application.DTOs.RoomServices;
 using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 
 public class RoomApplicationService(IRoomRepository roomRepository)
 {
-    public Task<Room?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<RoomResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return roomRepository.GetByIdAsync(id, cancellationToken);
+        var rooms = await roomRepository.GetAllAsync(cancellationToken);
+
+        return [.. rooms.Select(MapToResponse)];
     }
 
-    public Task<IReadOnlyList<Room>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<RoomResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return roomRepository.GetAllAsync(cancellationToken);
+        var room = await roomRepository.GetByIdAsync(id, cancellationToken);
+
+        return room is null ? null : MapToResponse(room);
     }
 
-    public Task AddAsync(Room room, CancellationToken cancellationToken = default)
+    public async Task<RoomResponse> AddAsync(CreateRoomRequest request, CancellationToken cancellationToken = default)
     {
-        return roomRepository.AddAsync(room, cancellationToken);
+        var room = new Room
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            Capacity = request.Capacity,
+            BaseHourlyRate = request.BaseHourlyRate,
+        };
+
+        await roomRepository.AddAsync(room, cancellationToken);
+
+        return MapToResponse(room);
     }
 
-    public Task UpdateAsync(Room room, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateAsync(Guid id, UpdateRoomRequest request, CancellationToken cancellationToken = default)
     {
-        return roomRepository.UpdateAsync(room, cancellationToken);
+        var room = await roomRepository.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (room is null)
+        {
+            return false;
+        }
+
+        room.Name = request.Name;
+        room.Capacity = request.Capacity;
+        room.BaseHourlyRate = request.BaseHourlyRate;
+
+        await roomRepository.UpdateAsync(room, cancellationToken);
+
+        return true;
     }
 
-    public Task DeleteAsync(Room room, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return roomRepository.DeleteAsync(room, cancellationToken);
+        var room = await roomRepository.GetByIdAsync(id, cancellationToken);
+
+        if (room is null)
+        {
+            return false;
+        }
+
+        await roomRepository.DeleteAsync(room, cancellationToken);
+
+        return true;
+    }
+
+    private static RoomResponse MapToResponse(Room room)
+    {
+        return new RoomResponse
+        {
+            Id = room.Id,
+            Name = room.Name,
+            Capacity = room.Capacity,
+            BaseHourlyRate = room.BaseHourlyRate,
+            Services = [.. room.Services
+                .Select(service => new RoomServiceResponse
+                {
+                    Id = service.Id,
+                    Name = service.Name,
+                    Price = service.Price,
+                })],
+        };
     }
 }
