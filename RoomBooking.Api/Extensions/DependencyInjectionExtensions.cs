@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Application.Interfaces;
+using RoomBooking.Application.Services;
 using RoomBooking.Infrastructure.Persistence;
 using RoomBooking.Infrastructure.Repositories;
 
@@ -16,6 +17,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRoomServiceRepository, RoomServiceRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
 
+        services.AddScoped<RoomApplicationService>();
+        services.AddScoped<RoomServiceApplicationService>();
+        services.AddScoped<BookingApplicationService>();
         return services;
     }
 

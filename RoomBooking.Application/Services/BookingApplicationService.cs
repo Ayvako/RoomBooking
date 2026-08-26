@@ -7,7 +7,10 @@ using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 using RoomBooking.Domain.Enums;
 
-public class BookingApplicationService(IBookingRepository bookingRepository, IRoomRepository roomRepository)
+public class BookingApplicationService(
+    IBookingRepository bookingRepository,
+    IRoomRepository roomRepository,
+    IRoomServiceRepository roomServiceRepository)
 {
     public async Task<BookingResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
@@ -29,21 +32,27 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
 
         var room = await roomRepository.GetByIdAsync(request.RoomId, cancellationToken) ?? throw new KeyNotFoundException($"Room with id '{request.RoomId}' was not found.");
 
+        var services = await this.GetSelectedServicesAsync(room.Id, request.ServiceIds, cancellationToken);
+
         await this.EnsureNoConflictAsync(request.RoomId, request.StartTime, request.EndTime, cancellationToken);
 
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
             RoomId = room.Id,
+            Room = room,
             StartTime = request.StartTime,
             EndTime = request.EndTime,
-            TotalPrice = CalculateTotalPrice(room, request.StartTime, request.EndTime),
+            TotalPrice = CalculateTotalPrice(
+                room,
+                services,
+                request.StartTime,
+                request.EndTime),
             Status = BookingStatus.Active,
+            Services = services,
         };
 
         await bookingRepository.AddAsync(booking, cancellationToken);
-
-        booking.Room = room;
 
         return MapToResponse(booking);
     }
@@ -69,7 +78,7 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         booking.StartTime = request.StartTime;
         booking.EndTime = request.EndTime;
 
-        booking.TotalPrice = CalculateTotalPrice(booking.Room, request.StartTime, request.EndTime);
+        booking.TotalPrice = CalculateTotalPrice(booking.Room, booking.Services, request.StartTime, request.EndTime);
 
         await bookingRepository.UpdateAsync(booking, cancellationToken);
 
@@ -97,13 +106,11 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         return true;
     }
 
-    private static decimal CalculateTotalPrice(Room room, DateTime startTime, DateTime endTime)
+    private static decimal CalculateTotalPrice(Room room, IEnumerable<RoomService> services, DateTime startTime, DateTime endTime)
     {
-        var duration = endTime - startTime;
-        var hours = (decimal)duration.TotalHours;
+        var hours = (decimal)(endTime - startTime).TotalHours;
 
-        var servicesPrice = room.Services.Sum(
-            service => service.Price);
+        var servicesPrice = services.Sum(service => service.Price);
 
         return (room.BaseHourlyRate * hours) + servicesPrice;
     }
@@ -159,5 +166,36 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         {
             throw new InvalidOperationException("The room is already booked for the selected period.");
         }
+    }
+
+    private async Task<List<RoomService>> GetSelectedServicesAsync(Guid roomId, IReadOnlyList<Guid> serviceIds, CancellationToken cancellationToken)
+    {
+        if (serviceIds.Count == 0)
+        {
+            return [];
+        }
+
+        var services = new List<RoomService>();
+
+        foreach (var serviceId in serviceIds.Distinct())
+        {
+            var service = await roomServiceRepository.GetByIdAsync(
+                serviceId,
+                cancellationToken);
+
+            if (service is null)
+            {
+                throw new KeyNotFoundException($"Room service with id '{serviceId}' was not found.");
+            }
+
+            if (service.RoomId != roomId)
+            {
+                throw new ArgumentException($"Room service '{serviceId}' does not belong to room '{roomId}'.");
+            }
+
+            services.Add(service);
+        }
+
+        return services;
     }
 }
