@@ -32,48 +32,22 @@ public class BookingsController(BookingApplicationService bookingApplicationServ
     [HttpPost]
     public async Task<ActionResult<BookingResponse>> Create(CreateBookingRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var booking = await bookingApplicationService.AddAsync(request, cancellationToken);
+        var booking = await bookingApplicationService.AddAsync(request, cancellationToken);
 
-            return this.CreatedAtAction(nameof(this.GetById), new { id = booking.Id }, booking);
-        }
-        catch (KeyNotFoundException)
-        {
-            return this.NotFound();
-        }
-        catch (ArgumentException)
-        {
-            return this.BadRequest();
-        }
-        catch (InvalidOperationException)
-        {
-            return this.Conflict();
-        }
+        return this.CreatedAtAction(nameof(this.GetById), new { id = booking.Id }, booking);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, UpdateBookingRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var updated = await bookingApplicationService.UpdateAsync(id, request, cancellationToken);
+        var updated = await bookingApplicationService.UpdateAsync(id, request, cancellationToken);
 
-            if (!updated)
-            {
-                return this.NotFound();
-            }
+        if (!updated)
+        {
+            return this.NotFound();
+        }
 
-            return this.NoContent();
-        }
-        catch (ArgumentException)
-        {
-            return this.BadRequest();
-        }
-        catch (InvalidOperationException)
-        {
-            return this.Conflict();
-        }
+        return this.NoContent();
     }
 
     [HttpPatch("{id:guid}/cancel")]
