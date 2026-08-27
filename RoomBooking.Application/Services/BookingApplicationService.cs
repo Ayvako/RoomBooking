@@ -7,7 +7,7 @@ using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 using RoomBooking.Domain.Enums;
 
-public class BookingApplicationService(IBookingRepository bookingRepository, IRoomRepository roomRepository, IRoomServiceRepository roomServiceRepository)
+public class BookingApplicationService(IBookingRepository bookingRepository, IRoomRepository roomRepository, IRoomServiceRepository roomServiceRepository, IPricingService pricingService)
 {
     public async Task<BookingResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
@@ -40,7 +40,7 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
             Room = room,
             StartTime = request.StartTime,
             EndTime = request.EndTime,
-            TotalPrice = CalculateTotalPrice(
+            TotalPrice = pricingService.Calculate(
                 room,
                 services,
                 request.StartTime,
@@ -75,7 +75,7 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         booking.StartTime = request.StartTime;
         booking.EndTime = request.EndTime;
 
-        booking.TotalPrice = CalculateTotalPrice(booking.Room, booking.Services, request.StartTime, request.EndTime);
+        booking.TotalPrice = pricingService.Calculate(booking.Room, booking.Services, request.StartTime, request.EndTime);
 
         await bookingRepository.UpdateAsync(booking, cancellationToken);
 
@@ -101,15 +101,6 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         await bookingRepository.UpdateAsync(booking, cancellationToken);
 
         return true;
-    }
-
-    private static decimal CalculateTotalPrice(Room room, IEnumerable<RoomService> services, DateTime startTime, DateTime endTime)
-    {
-        var hours = (decimal)(endTime - startTime).TotalHours;
-
-        var servicesPrice = services.Sum(service => service.Price);
-
-        return (room.BaseHourlyRate * hours) + servicesPrice;
     }
 
     private static void ValidatePeriod(DateTime startTime, DateTime endTime)

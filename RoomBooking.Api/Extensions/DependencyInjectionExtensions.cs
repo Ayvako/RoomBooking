@@ -20,6 +20,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<RoomApplicationService>();
         services.AddScoped<RoomServiceApplicationService>();
         services.AddScoped<BookingApplicationService>();
+
+        services.AddScoped<IPricingService, PricingService>();
+
         return services;
     }
 
