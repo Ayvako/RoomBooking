@@ -1,12 +1,15 @@
 namespace RoomBooking.Api;
 
+using Microsoft.EntityFrameworkCore;
 using RoomBooking.Api.Extensions;
 using RoomBooking.Api.Middleware;
+using RoomBooking.Infrastructure.Persistence;
+using RoomBooking.Infrastructure.Persistence.Seed;
 using Scalar.AspNetCore;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,16 @@ public static class Program
         builder.Services.AddInfrastructureServices(builder.Configuration);
 
         var app = builder.Build();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider
+                .GetRequiredService<RoomBookingDbContext>();
+
+            await context.Database.MigrateAsync();
+
+            await SeedData.InitializeAsync(context);
+        }
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -29,6 +42,6 @@ public static class Program
 
         app.MapControllers();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
