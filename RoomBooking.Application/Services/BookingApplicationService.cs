@@ -7,10 +7,7 @@ using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 using RoomBooking.Domain.Enums;
 
-public class BookingApplicationService(
-    IBookingRepository bookingRepository,
-    IRoomRepository roomRepository,
-    IRoomServiceRepository roomServiceRepository)
+public class BookingApplicationService(IBookingRepository bookingRepository, IRoomRepository roomRepository, IRoomServiceRepository roomServiceRepository)
 {
     public async Task<BookingResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
@@ -179,14 +176,7 @@ public class BookingApplicationService(
 
         foreach (var serviceId in serviceIds.Distinct())
         {
-            var service = await roomServiceRepository.GetByIdAsync(
-                serviceId,
-                cancellationToken);
-
-            if (service is null)
-            {
-                throw new KeyNotFoundException($"Room service with id '{serviceId}' was not found.");
-            }
+            var service = await roomServiceRepository.GetByIdAsync(serviceId, cancellationToken) ?? throw new KeyNotFoundException($"Room service with id '{serviceId}' was not found.");
 
             if (service.RoomId != roomId)
             {

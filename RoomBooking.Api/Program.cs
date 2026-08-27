@@ -2,7 +2,7 @@ namespace RoomBooking.Api;
 
 using RoomBooking.Api.Extensions;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {

@@ -1,0 +1,65 @@
+﻿namespace RoomBooking.Api.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
+using RoomBooking.Application.DTOs.Rooms;
+using RoomBooking.Application.Services;
+
+[ApiController]
+[Route("api/[controller]")]
+public class RoomsController(RoomApplicationService roomApplicationService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<RoomResponse>>> GetAll(CancellationToken cancellationToken)
+    {
+        var rooms = await roomApplicationService.GetAllAsync(cancellationToken);
+
+        return this.Ok(rooms);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<RoomResponse>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var room = await roomApplicationService.GetByIdAsync(id, cancellationToken);
+
+        if (room is null)
+        {
+            return this.NotFound();
+        }
+
+        return this.Ok(room);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<RoomResponse>> Create(CreateRoomRequest request, CancellationToken cancellationToken)
+    {
+        var room = await roomApplicationService.AddAsync(request, cancellationToken);
+
+        return this.CreatedAtAction(nameof(this.GetById), new { id = room.Id }, room);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, UpdateRoomRequest request, CancellationToken cancellationToken)
+    {
+        var updated = await roomApplicationService.UpdateAsync(id, request, cancellationToken);
+
+        if (!updated)
+        {
+            return this.NotFound();
+        }
+
+        return this.NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await roomApplicationService.DeleteAsync(id, cancellationToken);
+
+        if (!deleted)
+        {
+            return this.NotFound();
+        }
+
+        return this.NoContent();
+    }
+}
