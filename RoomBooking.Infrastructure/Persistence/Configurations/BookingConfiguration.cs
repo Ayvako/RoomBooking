@@ -26,7 +26,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .HasMaxLength(20);
 
         builder.HasOne(booking => booking.Room)
-            .WithMany()
+            .WithMany(room => room.Bookings)
             .HasForeignKey(booking => booking.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
 

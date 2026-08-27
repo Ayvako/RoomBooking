@@ -70,6 +70,19 @@ public class RoomApplicationService(IRoomRepository roomRepository)
         return true;
     }
 
+    public async Task<IReadOnlyList<RoomResponse>> GetAvailableAsync(AvailableRoomsRequest request, CancellationToken cancellationToken = default)
+    {
+        if (request.StartTime >= request.EndTime)
+        {
+            throw new ArgumentException(
+                "Start time must be earlier than end time.");
+        }
+
+        var rooms = await roomRepository.GetAvailableAsync(request.StartTime, request.EndTime, request.Capacity, cancellationToken);
+
+        return [.. rooms.Select(MapToResponse)];
+    }
+
     private static RoomResponse MapToResponse(Room room)
     {
         return new RoomResponse

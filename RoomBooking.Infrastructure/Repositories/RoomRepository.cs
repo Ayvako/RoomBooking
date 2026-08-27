@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
+using RoomBooking.Domain.Enums;
 using RoomBooking.Infrastructure.Persistence;
 
 public class RoomRepository(RoomBookingDbContext context) : IRoomRepository
@@ -39,5 +40,18 @@ public class RoomRepository(RoomBookingDbContext context) : IRoomRepository
     {
         context.Rooms.Remove(room);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Room>> GetAvailableAsync(DateTime startTime, DateTime endTime, int capacity, CancellationToken cancellationToken = default)
+    {
+        return await context.Rooms
+            .Include(room => room.Services)
+            .Where(room => room.Capacity >= capacity)
+            .Where(room =>
+                !room.Bookings.Any(booking =>
+                    booking.Status == BookingStatus.Active &&
+                    startTime < booking.EndTime &&
+                    endTime > booking.StartTime))
+            .ToListAsync(cancellationToken);
     }
 }

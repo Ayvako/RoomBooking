@@ -62,4 +62,12 @@ public class RoomsController(RoomApplicationService roomApplicationService) : Co
 
         return this.NoContent();
     }
+
+    [HttpGet("available")]
+    public async Task<ActionResult<IReadOnlyList<RoomResponse>>> GetAvailable([FromQuery] AvailableRoomsRequest request, CancellationToken cancellationToken)
+    {
+        var rooms = await roomApplicationService.GetAvailableAsync(request, cancellationToken);
+
+        return this.Ok(rooms);
+    }
 }

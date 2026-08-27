@@ -11,4 +11,6 @@ public class Room
     public decimal BaseHourlyRate { get; set; }
 
     public List<RoomService> Services { get; set; } = [];
+
+    public List<Booking> Bookings { get; set; } = [];
 }
