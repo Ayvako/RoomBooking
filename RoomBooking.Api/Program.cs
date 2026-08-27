@@ -1,6 +1,7 @@
 namespace RoomBooking.Api;
 
 using RoomBooking.Api.Extensions;
+using Scalar.AspNetCore;
 
 public static class Program
 {
@@ -16,6 +17,7 @@ public static class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.MapScalarApiReference();
         }
 
         app.UseHttpsRedirection();
