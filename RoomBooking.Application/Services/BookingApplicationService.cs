@@ -167,9 +167,10 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
 
         foreach (var serviceId in serviceIds.Distinct())
         {
-            var service = await roomServiceRepository.GetByIdAsync(serviceId, cancellationToken) ?? throw new KeyNotFoundException($"Room service with id '{serviceId}' was not found.");
+            var service = await roomServiceRepository.GetByIdWithRoomsAsync(serviceId, cancellationToken) ??
+                throw new KeyNotFoundException($"Room service with id '{serviceId}' was not found.");
 
-            if (service.RoomId != roomId)
+            if (!service.Rooms.Any(room => room.Id == roomId))
             {
                 throw new ArgumentException($"Room service '{serviceId}' does not belong to room '{roomId}'.");
             }

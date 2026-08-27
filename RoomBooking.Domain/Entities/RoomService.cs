@@ -8,7 +8,5 @@ public class RoomService
 
     public decimal Price { get; set; }
 
-    public Guid RoomId { get; set; }
-
-    public Room? Room { get; set; }
+    public List<Room> Rooms { get; set; } = [];
 }

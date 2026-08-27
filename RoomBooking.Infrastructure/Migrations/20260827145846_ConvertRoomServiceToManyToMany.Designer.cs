@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RoomBooking.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using RoomBooking.Infrastructure.Persistence;
 namespace RoomBooking.Infrastructure.Migrations
 {
     [DbContext(typeof(RoomBookingDbContext))]
-    partial class RoomBookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827145846_ConvertRoomServiceToManyToMany")]
+    partial class ConvertRoomServiceToManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.19");

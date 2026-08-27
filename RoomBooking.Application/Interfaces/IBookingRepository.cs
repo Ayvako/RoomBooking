@@ -15,4 +15,6 @@ public interface IBookingRepository
     Task UpdateAsync(Booking booking, CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Booking booking, CancellationToken cancellationToken = default);
+
+    Task<bool> ExistsByRoomIdAsync(Guid roomId, CancellationToken cancellationToken = default);
 }

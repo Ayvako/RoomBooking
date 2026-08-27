@@ -5,7 +5,7 @@ using RoomBooking.Application.DTOs.RoomServices;
 using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 
-public class RoomApplicationService(IRoomRepository roomRepository)
+public class RoomApplicationService(IRoomRepository roomRepository, IBookingRepository bookingRepository)
 {
     public async Task<IReadOnlyList<RoomResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -58,12 +58,21 @@ public class RoomApplicationService(IRoomRepository roomRepository)
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var room = await roomRepository.GetByIdAsync(id, cancellationToken);
+        var room = await roomRepository.GetByIdWithServicesAsync(id, cancellationToken);
 
         if (room is null)
         {
             return false;
         }
+
+        var hasBookings = await bookingRepository.ExistsByRoomIdAsync(id, cancellationToken);
+
+        if (hasBookings)
+        {
+            throw new InvalidOperationException("Room cannot be deleted because it has bookings.");
+        }
+
+        room.Services.Clear();
 
         await roomRepository.DeleteAsync(room, cancellationToken);
 

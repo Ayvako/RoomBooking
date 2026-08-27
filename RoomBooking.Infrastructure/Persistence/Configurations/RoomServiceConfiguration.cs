@@ -17,10 +17,5 @@ public class RoomServiceConfiguration : IEntityTypeConfiguration<RoomService>
         builder.Property(service => service.Price)
             .IsRequired()
             .HasPrecision(18, 2);
-
-        builder.HasOne(service => service.Room)
-            .WithMany(room => room.Services)
-            .HasForeignKey(service => service.RoomId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

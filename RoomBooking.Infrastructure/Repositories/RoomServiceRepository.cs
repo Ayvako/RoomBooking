@@ -15,13 +15,6 @@ public class RoomServiceRepository(RoomBookingDbContext context) : IRoomServiceR
                 cancellationToken);
     }
 
-    public async Task<IReadOnlyList<RoomService>> GetByRoomIdAsync(Guid roomId, CancellationToken cancellationToken = default)
-    {
-        return await context.RoomServices
-            .Where(service => service.RoomId == roomId)
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task AddAsync(RoomService service, CancellationToken cancellationToken = default)
     {
         await context.RoomServices.AddAsync(
@@ -43,5 +36,14 @@ public class RoomServiceRepository(RoomBookingDbContext context) : IRoomServiceR
         context.RoomServices.Remove(service);
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<RoomService?> GetByIdWithRoomsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await context.RoomServices
+            .Include(service => service.Rooms)
+            .FirstOrDefaultAsync(
+                service => service.Id == id,
+                cancellationToken);
     }
 }

@@ -20,5 +20,9 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
         builder.Property(room => room.BaseHourlyRate)
             .IsRequired()
             .HasPrecision(18, 2);
+        builder
+            .HasMany(room => room.Services)
+            .WithMany(service => service.Rooms)
+            .UsingEntity("RoomRoomService");
     }
 }

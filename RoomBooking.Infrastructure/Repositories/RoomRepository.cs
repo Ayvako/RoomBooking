@@ -11,6 +11,14 @@ public class RoomRepository(RoomBookingDbContext context) : IRoomRepository
     public async Task<Room?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await context.Rooms
+            .FirstOrDefaultAsync(
+                room => room.Id == id,
+                cancellationToken);
+    }
+
+    public async Task<Room?> GetByIdWithServicesAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await context.Rooms
             .Include(room => room.Services)
             .FirstOrDefaultAsync(
                 room => room.Id == id,

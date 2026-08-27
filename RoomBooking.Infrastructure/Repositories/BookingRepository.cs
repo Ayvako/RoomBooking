@@ -55,4 +55,9 @@ public class BookingRepository(RoomBookingDbContext context) : IBookingRepositor
 
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<bool> ExistsByRoomIdAsync(Guid roomId, CancellationToken cancellationToken = default)
+    {
+        return await context.Bookings.AnyAsync(x => x.RoomId == roomId, cancellationToken);
+    }
 }

@@ -15,4 +15,6 @@ public interface IRoomRepository
     Task DeleteAsync(Room room, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<Room>> GetAvailableAsync(DateTime startTime, DateTime endTime, int capacity, CancellationToken cancellationToken = default);
+
+    Task<Room?> GetByIdWithServicesAsync(Guid id, CancellationToken cancellationToken = default);
 }

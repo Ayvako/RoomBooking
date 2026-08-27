@@ -15,24 +15,47 @@ public class RoomServiceApplicationService(IRoomServiceRepository roomServiceRep
 
     public async Task<IReadOnlyList<RoomServiceResponse>> GetByRoomIdAsync(Guid roomId, CancellationToken cancellationToken = default)
     {
-        var services = await roomServiceRepository.GetByRoomIdAsync(roomId, cancellationToken);
-
-        return [.. services.Select(MapToResponse)];
-    }
-
-    public async Task<RoomServiceResponse?> AddAsync(Guid roomId, CreateRoomServiceRequest request, CancellationToken cancellationToken = default)
-    {
-        var room = await roomRepository.GetByIdAsync(roomId, cancellationToken);
+        var room = await roomRepository.GetByIdWithServicesAsync(roomId, cancellationToken);
 
         if (room is null)
         {
-            return null;
+            return [];
         }
 
+        return [.. room.Services.Select(MapToResponse)];
+    }
+
+    public async Task<bool> AddToRoomAsync(Guid roomId, Guid serviceId, CancellationToken cancellationToken = default)
+    {
+        var room = await roomRepository.GetByIdWithServicesAsync(roomId, cancellationToken);
+
+        if (room is null)
+        {
+            return false;
+        }
+
+        var service = await roomServiceRepository.GetByIdWithRoomsAsync(serviceId, cancellationToken);
+
+        if (service is null)
+        {
+            return false;
+        }
+
+        if (service.Rooms.All(x => x.Id != roomId))
+        {
+            room.Services.Add(service);
+
+            await roomRepository.UpdateAsync(room, cancellationToken);
+        }
+
+        return true;
+    }
+
+    public async Task<RoomServiceResponse> AddAsync(CreateRoomServiceRequest request, CancellationToken cancellationToken = default)
+    {
         var service = new RoomService
         {
             Id = Guid.NewGuid(),
-            RoomId = roomId,
             Name = request.Name,
             Price = request.Price,
         };
@@ -61,12 +84,14 @@ public class RoomServiceApplicationService(IRoomServiceRepository roomServiceRep
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var service = await roomServiceRepository.GetByIdAsync(id, cancellationToken);
+        var service = await roomServiceRepository.GetByIdWithRoomsAsync(id, cancellationToken);
 
         if (service is null)
         {
             return false;
         }
+
+        service.Rooms.Clear();
 
         await roomServiceRepository.DeleteAsync(service, cancellationToken);
 
