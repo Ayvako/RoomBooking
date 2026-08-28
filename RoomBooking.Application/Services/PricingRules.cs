@@ -1,13 +1,30 @@
 ﻿namespace RoomBooking.Application.Services;
 
+/// <summary>
+/// Contains pricing multipliers used to calculate room booking costs.
+/// </summary>
 public static class PricingRules
 {
+    /// <summary>
+    /// Discount multiplier applied during the morning period.
+    /// </summary>
     public const decimal MorningDiscount = 0.90m;
 
+    /// <summary>
+    /// Discount multiplier applied during the evening period.
+    /// </summary>
     public const decimal EveningDiscount = 0.80m;
 
+    /// <summary>
+    /// Surcharge multiplier applied during the peak period.
+    /// </summary>
     public const decimal PeakSurcharge = 1.15m;
 
+    /// <summary>
+    /// Gets the pricing multiplier applicable to the specified time.
+    /// </summary>
+    /// <param name="time">The date and time for which the multiplier is calculated.</param>
+    /// <returns>The pricing multiplier applicable to the specified time.</returns>
     public static decimal GetMultiplier(DateTime time)
     {
         var currentTime = time.TimeOfDay;

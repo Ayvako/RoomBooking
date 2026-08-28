@@ -3,8 +3,20 @@
 using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 
+/// <summary>
+/// Calculates the total booking price based on room rate,
+/// selected services, booking duration, and pricing rules.
+/// </summary>
 public class PricingService : IPricingService
 {
+    /// <summary>
+    /// Calculates the total price for a booking.
+    /// </summary>
+    /// <param name="room">The room being booked.</param>
+    /// <param name="services">The services selected for the booking.</param>
+    /// <param name="startTime">The booking start time.</param>
+    /// <param name="endTime">The booking end time.</param>
+    /// <returns>The calculated total booking price.</returns>
     public decimal Calculate(Room room, IEnumerable<RoomService> services, DateTime startTime, DateTime endTime)
     {
         var roomPrice = CalculateRoomPrice(room.BaseHourlyRate, startTime, endTime);

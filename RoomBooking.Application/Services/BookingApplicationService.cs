@@ -7,8 +7,19 @@ using RoomBooking.Application.Interfaces;
 using RoomBooking.Domain.Entities;
 using RoomBooking.Domain.Enums;
 
+/// <summary>
+/// Provides application-level operations for managing bookings.
+/// </summary>
 public class BookingApplicationService(IBookingRepository bookingRepository, IRoomRepository roomRepository, IRoomServiceRepository roomServiceRepository, IPricingService pricingService)
 {
+    /// <summary>
+    /// Gets a booking by its identifier.
+    /// </summary>
+    /// <param name="id">The booking identifier.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>
+    /// The booking response if found; otherwise, <see langword="null"/>.
+    /// </returns>
     public async Task<BookingResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var booking = await bookingRepository.GetByIdAsync(id, cancellationToken);
@@ -16,6 +27,11 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         return booking is null ? null : MapToResponse(booking);
     }
 
+    /// <summary>
+    /// Gets all bookings.
+    /// </summary>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A collection of booking responses.</returns>
     public async Task<IReadOnlyList<BookingResponse>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var bookings = await bookingRepository.GetAllAsync(cancellationToken);
@@ -23,6 +39,21 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         return [.. bookings.Select(MapToResponse)];
     }
 
+    /// <summary>
+    /// Creates a new booking.
+    /// </summary>
+    /// <param name="request">The booking creation request.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>The created booking.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the room identifier is empty or the booking period is invalid.
+    /// </exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Thrown when the requested room or room service does not exist.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the room is already booked for the selected period.
+    /// </exception>
     public async Task<BookingResponse> AddAsync(CreateBookingRequest request, CancellationToken cancellationToken = default)
     {
         if (request.RoomId == Guid.Empty)
@@ -59,6 +90,23 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         return MapToResponse(booking);
     }
 
+    /// <summary>
+    /// Updates the period of an existing booking.
+    /// </summary>
+    /// <param name="id">The booking identifier.</param>
+    /// <param name="request">The booking update request.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>
+    /// <see langword="true"/> if the booking was updated;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the booking period is invalid.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the booking is cancelled or the room is already booked
+    /// for the selected period.
+    /// </exception>
     public async Task<bool> UpdateAsync(Guid id, UpdateBookingRequest request, CancellationToken cancellationToken = default)
     {
         ValidatePeriod(request.StartTime, request.EndTime);
@@ -87,6 +135,15 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
         return true;
     }
 
+    /// <summary>
+    /// Cancels an existing booking.
+    /// </summary>
+    /// <param name="id">The booking identifier.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>
+    /// <see langword="true"/> if the booking exists and was cancelled;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
     public async Task<bool> CancelAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var booking = await bookingRepository.GetByIdAsync(id, cancellationToken);
@@ -133,12 +190,12 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
                 Capacity = booking.Room.Capacity,
                 BaseHourlyRate = booking.Room.BaseHourlyRate,
                 Services = [.. booking.Room.Services
-                        .Select(service => new RoomServiceResponse
-                        {
-                            Id = service.Id,
-                            Name = service.Name,
-                            Price = service.Price,
-                        })],
+                    .Select(service => new RoomServiceResponse
+                    {
+                        Id = service.Id,
+                        Name = service.Name,
+                        Price = service.Price,
+                    })],
             },
         };
     }
