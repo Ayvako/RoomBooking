@@ -30,6 +30,7 @@ public class BookingsController(BookingApplicationService bookingApplicationServ
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(BookingResponse), StatusCodes.Status201Created)]
     public async Task<ActionResult<BookingResponse>> Create(CreateBookingRequest request, CancellationToken cancellationToken)
     {
         var booking = await bookingApplicationService.AddAsync(request, cancellationToken);
@@ -38,6 +39,8 @@ public class BookingsController(BookingApplicationService bookingApplicationServ
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, UpdateBookingRequest request, CancellationToken cancellationToken)
     {
         var updated = await bookingApplicationService.UpdateAsync(id, request, cancellationToken);
@@ -51,6 +54,8 @@ public class BookingsController(BookingApplicationService bookingApplicationServ
     }
 
     [HttpPatch("{id:guid}/cancel")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Cancel(Guid id, CancellationToken cancellationToken)
     {
         var cancelled = await bookingApplicationService.CancelAsync(id, cancellationToken);
