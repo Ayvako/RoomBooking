@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using RoomBooking.Api.Extensions;
 using RoomBooking.Api.Middleware;
 using RoomBooking.Infrastructure.Persistence;
-using RoomBooking.Infrastructure.Persistence.Seed;
 using Scalar.AspNetCore;
 
 public static class Program

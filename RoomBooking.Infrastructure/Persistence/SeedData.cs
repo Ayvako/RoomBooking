@@ -1,4 +1,4 @@
-﻿namespace RoomBooking.Infrastructure.Persistence.Seed;
+﻿namespace RoomBooking.Infrastructure.Persistence;
 
 using RoomBooking.Domain.Entities;
 
@@ -11,61 +11,64 @@ public static class SeedData
             return;
         }
 
-        var conferenceRoom = new Room
+        var roomA = new Room
         {
             Id = Guid.NewGuid(),
-            Name = "Conference Room A",
-            Capacity = 10,
-            BaseHourlyRate = 100,
+            Name = "Зал A",
+            Capacity = 50,
+            BaseHourlyRate = 2000,
         };
 
-        var meetingRoom = new Room
+        var roomB = new Room
         {
             Id = Guid.NewGuid(),
-            Name = "Meeting Room B",
-            Capacity = 6,
-            BaseHourlyRate = 60,
+            Name = "Зал B",
+            Capacity = 100,
+            BaseHourlyRate = 3500,
         };
 
-        var smallRoom = new Room
+        var roomC = new Room
         {
             Id = Guid.NewGuid(),
-            Name = "Small Room C",
-            Capacity = 3,
-            BaseHourlyRate = 40,
+            Name = "Зал C",
+            Capacity = 30,
+            BaseHourlyRate = 1500,
         };
 
         var projector = new RoomService
         {
             Id = Guid.NewGuid(),
-            Name = "Projector",
-            Price = 25,
+            Name = "Проєктор",
+            Price = 500,
         };
 
-        var coffee = new RoomService
+        var wiFi = new RoomService
         {
             Id = Guid.NewGuid(),
-            Name = "Coffee service",
-            Price = 15,
+            Name = "Wi-Fi",
+            Price = 300,
         };
 
-        var videoConference = new RoomService
+        var sound = new RoomService
         {
             Id = Guid.NewGuid(),
-            Name = "Video conference",
-            Price = 50,
+            Name = "Звук",
+            Price = 700,
         };
 
-        conferenceRoom.Services.Add(projector);
-        conferenceRoom.Services.Add(coffee);
-        conferenceRoom.Services.Add(videoConference);
+        roomA.Services.Add(projector);
+        roomA.Services.Add(wiFi);
+        roomA.Services.Add(sound);
 
-        meetingRoom.Services.Add(projector);
-        meetingRoom.Services.Add(coffee);
+        roomB.Services.Add(projector);
+        roomB.Services.Add(wiFi);
+        roomB.Services.Add(sound);
 
-        smallRoom.Services.Add(coffee);
+        roomC.Services.Add(projector);
+        roomC.Services.Add(wiFi);
+        roomC.Services.Add(sound);
 
-        await context.Rooms.AddRangeAsync(conferenceRoom, meetingRoom, smallRoom);
+        await context.Rooms.AddRangeAsync(roomA, roomB, roomC);
 
         await context.SaveChangesAsync();
     }
