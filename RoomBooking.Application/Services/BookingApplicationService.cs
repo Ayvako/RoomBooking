@@ -126,22 +126,20 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
             EndTime = booking.EndTime,
             TotalPrice = booking.TotalPrice,
             Status = booking.Status,
-            Room = booking.Room is null
-                ? null
-                : new RoomResponse
-                {
-                    Id = booking.Room.Id,
-                    Name = booking.Room.Name,
-                    Capacity = booking.Room.Capacity,
-                    BaseHourlyRate = booking.Room.BaseHourlyRate,
-                    Services = [.. booking.Room.Services
+            Room = new RoomResponse
+            {
+                Id = booking.Room.Id,
+                Name = booking.Room.Name,
+                Capacity = booking.Room.Capacity,
+                BaseHourlyRate = booking.Room.BaseHourlyRate,
+                Services = [.. booking.Room.Services
                         .Select(service => new RoomServiceResponse
                         {
                             Id = service.Id,
                             Name = service.Name,
                             Price = service.Price,
                         })],
-                },
+            },
         };
     }
 

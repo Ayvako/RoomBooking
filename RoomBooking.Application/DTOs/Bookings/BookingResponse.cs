@@ -17,5 +17,5 @@ public class BookingResponse
 
     public BookingStatus Status { get; set; }
 
-    public RoomResponse? Room { get; set; }
+    public RoomResponse Room { get; set; } = null!;
 }
