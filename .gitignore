@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/RoomBooking.Api/roombooking.db
+/RoomBooking.Api/roombooking.db-shm
+/RoomBooking.Api/roombooking.db-wal
