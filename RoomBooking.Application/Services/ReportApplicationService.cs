@@ -9,4 +9,9 @@ public class ReportApplicationService(IReportRepository reportRepository)
     {
         return await reportRepository.GetBookingStatisticsAsync(from, to, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<RoomBookingStatisticsResponse>> GetRoomBookingStatisticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        return await reportRepository.GetRoomBookingStatisticsAsync(from, to, cancellationToken);
+    }
 }

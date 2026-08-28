@@ -1,9 +1,11 @@
-﻿namespace RoomBooking.Application.Interfaces
-{
-    using RoomBooking.Application.DTOs.Reports;
+﻿namespace RoomBooking.Application.Interfaces;
 
-    public interface IReportRepository
-    {
-        Task<BookingStatisticsResponse> GetBookingStatisticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
-    }
+using System;
+using RoomBooking.Application.DTOs.Reports;
+
+public interface IReportRepository
+{
+    Task<BookingStatisticsResponse> GetBookingStatisticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RoomBookingStatisticsResponse>> GetRoomBookingStatisticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
 }

@@ -41,4 +41,32 @@ public class ReportRepository(RoomBookingDbContext context) : IReportRepository
             TotalBookedHours = totalBookedHours,
         };
     }
+
+    public async Task<IReadOnlyList<RoomBookingStatisticsResponse>> GetRoomBookingStatisticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        var rooms = await context.Rooms
+            .Include(room => room.Bookings)
+            .ToListAsync(cancellationToken);
+
+        return [.. rooms
+            .Select(room =>
+            {
+                var activeBookings = room.Bookings
+                    .Where(booking =>
+                        booking.Status == BookingStatus.Active &&
+                        booking.StartTime >= from &&
+                        booking.StartTime < to)
+                    .ToList();
+
+                return new RoomBookingStatisticsResponse
+                {
+                    RoomId = room.Id,
+                    RoomName = room.Name,
+                    BookingCount = activeBookings.Count,
+                    BookedHours = activeBookings.Sum(
+                        booking => (decimal)(booking.EndTime - booking.StartTime).TotalHours),
+                    Revenue = activeBookings.Sum(booking => booking.TotalPrice),
+                };
+            })];
+    }
 }

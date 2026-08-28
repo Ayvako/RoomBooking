@@ -24,4 +24,21 @@ public class ReportsController(ReportApplicationService reportApplicationService
 
         return this.Ok(statistics);
     }
+
+    [HttpGet("rooms")]
+    public async Task<ActionResult<IReadOnlyList<RoomBookingStatisticsResponse>>> GetRoomBookingStatistics([FromQuery] DateTime from, [FromQuery] DateTime to, CancellationToken cancellationToken)
+    {
+        if (from >= to)
+        {
+            return this.BadRequest(new
+            {
+                status = 400,
+                message = "The start date must be earlier than the end date.",
+            });
+        }
+
+        var statistics = await reportApplicationService.GetRoomBookingStatisticsAsync(from, to, cancellationToken);
+
+        return this.Ok(statistics);
+    }
 }
