@@ -13,4 +13,6 @@ public interface IRoomServiceRepository
     Task DeleteAsync(RoomService service, CancellationToken cancellationToken = default);
 
     Task<RoomService?> GetByIdWithRoomsAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RoomService>> GetAllAsync(CancellationToken cancellationToken = default);
 }

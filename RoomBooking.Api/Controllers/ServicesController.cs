@@ -8,6 +8,14 @@ using RoomBooking.Application.Services;
 [Route("api/services")]
 public class ServicesController(RoomServiceApplicationService roomServiceApplicationService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<RoomServiceResponse>>> GetAll(CancellationToken cancellationToken)
+    {
+        var services = await roomServiceApplicationService.GetAllAsync(cancellationToken);
+
+        return this.Ok(services);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<RoomServiceResponse>> GetById(Guid id, CancellationToken cancellationToken)
     {

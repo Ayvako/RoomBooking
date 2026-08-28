@@ -13,6 +13,13 @@ public class RoomServiceApplicationService(IRoomServiceRepository roomServiceRep
         return service is null ? null : MapToResponse(service);
     }
 
+    public async Task<IReadOnlyList<RoomServiceResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var services = await roomServiceRepository.GetAllAsync(cancellationToken);
+
+        return [.. services.Select(MapToResponse)];
+    }
+
     public async Task<IReadOnlyList<RoomServiceResponse>> GetByRoomIdAsync(Guid roomId, CancellationToken cancellationToken = default)
     {
         var room = await roomRepository.GetByIdWithServicesAsync(roomId, cancellationToken);

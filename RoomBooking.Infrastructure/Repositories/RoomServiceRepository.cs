@@ -46,4 +46,11 @@ public class RoomServiceRepository(RoomBookingDbContext context) : IRoomServiceR
                 service => service.Id == id,
                 cancellationToken);
     }
+
+    public async Task<IReadOnlyList<RoomService>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.RoomServices
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
 }
