@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace RoomBooking.Infrastructure.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
@@ -18,7 +17,7 @@ namespace RoomBooking.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Capacity = table.Column<int>(type: "INTEGER", nullable: false),
-                    BaseHourlyRate = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false)
+                    BaseHourlyRate = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
                 },
                 constraints: table =>
                 {
@@ -34,7 +33,7 @@ namespace RoomBooking.Infrastructure.Migrations
                     StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
+                    Status = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                 },
                 constraints: table =>
                 {
@@ -54,7 +53,7 @@ namespace RoomBooking.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Price = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    RoomId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    RoomId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

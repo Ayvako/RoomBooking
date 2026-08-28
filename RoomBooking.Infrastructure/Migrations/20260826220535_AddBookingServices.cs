@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace RoomBooking.Infrastructure.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class AddBookingServices : Migration
     {
@@ -16,7 +15,7 @@ namespace RoomBooking.Infrastructure.Migrations
                 columns: table => new
                 {
                     BookingId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    RoomServiceId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    RoomServiceId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {

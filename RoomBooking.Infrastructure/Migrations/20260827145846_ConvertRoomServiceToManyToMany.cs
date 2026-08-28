@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace RoomBooking.Infrastructure.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class ConvertRoomServiceToManyToMany : Migration
     {
@@ -28,7 +27,7 @@ namespace RoomBooking.Infrastructure.Migrations
                 columns: table => new
                 {
                     RoomsId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ServicesId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ServicesId = table.Column<Guid>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
