@@ -17,6 +17,7 @@ public class RoomsController(RoomApplicationService roomApplicationService) : Co
     }
 
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RoomResponse>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var room = await roomApplicationService.GetByIdAsync(id, cancellationToken);
