@@ -5,7 +5,7 @@ using RoomBooking.Application.DTOs.Bookings;
 using RoomBooking.Application.Services;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/bookings")]
 public class BookingsController(BookingApplicationService bookingApplicationService) : ControllerBase
 {
     [HttpGet]
