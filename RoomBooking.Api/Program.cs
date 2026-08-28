@@ -1,5 +1,6 @@
 namespace RoomBooking.Api;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Api.Extensions;
 using RoomBooking.Api.Middleware;
@@ -33,6 +34,12 @@ public static class Program
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
+
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/openapi/v1.json", "RoomBooking API");
+                options.RoutePrefix = "swagger";
+            });
         }
 
         app.UseHttpsRedirection();
