@@ -30,6 +30,7 @@ public class ServicesController(RoomServiceApplicationService roomServiceApplica
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(RoomServiceResponse), StatusCodes.Status201Created)]
     public async Task<ActionResult<RoomServiceResponse>> Create(CreateRoomServiceRequest request, CancellationToken cancellationToken)
     {
         var service = await roomServiceApplicationService.AddAsync(request, cancellationToken);
@@ -38,6 +39,8 @@ public class ServicesController(RoomServiceApplicationService roomServiceApplica
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, UpdateRoomServiceRequest request, CancellationToken cancellationToken)
     {
         var updated = await roomServiceApplicationService.UpdateAsync(id, request, cancellationToken);
@@ -51,6 +54,8 @@ public class ServicesController(RoomServiceApplicationService roomServiceApplica
     }
 
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var deleted = await roomServiceApplicationService.DeleteAsync(id, cancellationToken);
