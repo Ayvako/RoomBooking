@@ -25,6 +25,11 @@ public class BookingApplicationService(IBookingRepository bookingRepository, IRo
 
     public async Task<BookingResponse> AddAsync(CreateBookingRequest request, CancellationToken cancellationToken = default)
     {
+        if (request.RoomId == Guid.Empty)
+        {
+            throw new ArgumentException("Room ID cannot be empty.");
+        }
+
         ValidatePeriod(request.StartTime, request.EndTime);
 
         var room = await roomRepository.GetByIdAsync(request.RoomId, cancellationToken) ?? throw new KeyNotFoundException($"Room with id '{request.RoomId}' was not found.");
